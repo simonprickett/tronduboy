@@ -7,9 +7,7 @@
 
 Arduboy arduboy;
 
-void startScreen() {
-  unsigned int btnPressed = 0;
-  
+void startScreen() { 
   arduboy.clear();
   arduboy.setCursor(10, 20);
   arduboy.setTextSize(2);
