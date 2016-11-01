@@ -6,6 +6,8 @@
 #define DIR_RIGHT 3
 
 Arduboy arduboy;
+unsigned int score = 0, highScore = 0;
+char textBuf[15];
 
 void startScreen() { 
   arduboy.clear();
@@ -25,6 +27,8 @@ void startScreen() {
 
 void newGame() {
   unsigned int playerX, playerY, playerDir;
+
+  score = 0;
   
   arduboy.clear();
   arduboy.drawRect(0, 0, 128, 64, 1);
@@ -70,8 +74,41 @@ void newGame() {
 
     arduboy.drawPixel(playerX, playerY, 1);
     arduboy.display();
+    score++;
 
     delay(30);
+  }
+}
+
+void gameOver() { 
+  arduboy.clear();
+  arduboy.setCursor(10, 20);
+  arduboy.setTextSize(2);
+
+  if (score > highScore) {
+    sprintf(textBuf, "NEW HI:%u", score);
+  } else {
+    sprintf(textBuf, "SCORE:%u", score);
+  }
+  
+  arduboy.print(textBuf);
+
+  arduboy.setTextSize(1);
+
+  if (score <= highScore) {
+    arduboy.setCursor(12, 42);
+    sprintf(textBuf, "HI SCORE:%u", highScore);
+    arduboy.print(textBuf);
+  } else {
+    highScore = score;
+  }
+  
+  arduboy.setCursor(6, 53);
+  arduboy.print("PRESS FIRE TO START");
+  arduboy.display();
+
+  while(! (arduboy.pressed(A_BUTTON) || arduboy.pressed(B_BUTTON))) {
+    delay(15);
   }
 }
 
@@ -82,6 +119,7 @@ void setup() {
 void loop() {
   while(true) {
     startScreen(); 
-    newGame();   
+    newGame();  
+    gameOver(); 
   }
 }
