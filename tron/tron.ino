@@ -26,7 +26,8 @@ void startScreen() {
 }
 
 void newGame() {
-  unsigned int playerX, playerY, playerDir;
+  unsigned int playerX, playerY, playerDir, freq = 200;
+  short slowDown = 30;
 
   score = 0;
   
@@ -40,17 +41,30 @@ void newGame() {
   arduboy.drawPixel(playerX, playerY, 1);
   arduboy.display();
 
+  arduboy.tunes.tone(1500, 1000);
+  delay(1200);
+  arduboy.tunes.tone(1500, 1000);
+  delay(1200);
+  arduboy.tunes.tone(1500, 1000);
+  delay(1200);
+  arduboy.tunes.tone(2000, 1500);
+  delay(1500);
+  
   playerDir = random(0, 3);
   
   while(true) {
     if (arduboy.pressed(UP_BUTTON)) {
       playerDir = DIR_UP;
+      freq = 200;
     } else if (arduboy.pressed(DOWN_BUTTON)) {
       playerDir = DIR_DOWN;
+      freq = 200;
     } else if (arduboy.pressed(LEFT_BUTTON)) {
       playerDir = DIR_LEFT;
+      freq = 200;
     } else if (arduboy.pressed(RIGHT_BUTTON)) {
       playerDir = DIR_RIGHT;
+      freq = 200;
     }
 
     switch(playerDir) {
@@ -68,7 +82,15 @@ void newGame() {
         break;      
     }
 
+    arduboy.tunes.tone(freq++, 100);
+
     if (arduboy.getPixel(playerX, playerY)) {
+      arduboy.tunes.tone(1500, 100);
+      delay(100);
+      arduboy.tunes.tone(1000, 100);
+      delay(100);
+      arduboy.tunes.tone(500, 200);
+      delay(200);
       break;
     }
 
@@ -76,15 +98,19 @@ void newGame() {
     arduboy.display();
     score++;
 
-    delay(30);
+    if (score % 100 == 0 && slowDown > 0) {
+      slowDown -= 2;
+      arduboy.tunes.tone(3000, 100);
+    }
+    delay(slowDown);
   }
 }
 
 void gameOver() { 
   arduboy.clear();
-  arduboy.setCursor(10, 20);
   arduboy.setTextSize(2);
-
+  arduboy.setCursor(7, 20);
+  
   if (score > highScore) {
     sprintf(textBuf, "NEW HI:%u", score);
   } else {
